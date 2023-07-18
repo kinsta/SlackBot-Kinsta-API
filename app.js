@@ -40,6 +40,19 @@ async function getEnvironmentId(siteId) {
 	return data;
 }
 
+async function CheckOperationStatus(operationId) {
+	const resp = await fetch(
+		`https://api.kinsta.com/v2/operations/${operationId}`,
+		{
+			method: 'GET',
+			headers,
+		}
+	);
+
+	const data = await resp.json();
+	return data;
+}
+
 app.command('/environment_id', async ({ command, ack, say }) => {
 	try {
 		await ack();
@@ -73,6 +86,22 @@ app.command('/site_id', async ({ command, ack, say }) => {
 		let siteId = currentSite.id;
 
 		say(`Hey 👋, ${siteName}'s site ID is 👉 ${siteId}`);
+	} catch (error) {
+		console.log('err');
+		console.error(error);
+	}
+});
+
+app.command('/operation_status', async ({ command, ack, say }) => {
+	try {
+		await ack();
+
+		let operationId = command.text;
+
+		let response = await CheckOperationStatus(operationId);
+		let operationMessage = response.message;
+
+		say(`Hey 👋, Your operation's status is 👉 ${operationMessage}`);
 	} catch (error) {
 		console.log('err');
 		console.error(error);
