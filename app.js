@@ -98,7 +98,35 @@ app.command('/environment_id', async ({ command, ack, say }) => {
 		let envId = envIdResponse.site.environments[0].id;
 
 		if (envId) {
-			say(`Hey 👋,\nYour site ${siteName}'s environment ID is 👉 ${envId}`);
+			// say(`Hey 👋,\nYour site ${siteName}'s environment ID is 👉 ${envId}`);
+			say({
+				blocks: [
+					{
+						type: 'section',
+						text: {
+							type: 'mrkdwn',
+							text: `Hello, your new site (*${req.body.displayName}*) has started building. It takes minutes to build. You can check the operation status intermitently via http://localhost:3000/operation/${req.body.displayName}/${data.operation_id}.`,
+						},
+					},
+					{
+						type: 'divider',
+					},
+					{
+						type: 'section',
+						text: {
+							type: 'mrkdwn',
+							text: "_Here are your site's details:_",
+						},
+					},
+					{
+						type: 'section',
+						text: {
+							type: 'mrkdwn',
+							text: `1. *Site URL:* http://${req.body.displayName}.kinsta.cloud/\n2. *WP Admin URL:* http://${req.body.displayName}.kinsta.cloud/wp-admin/`,
+						},
+					},
+				],
+			});
 		}
 	}
 });
