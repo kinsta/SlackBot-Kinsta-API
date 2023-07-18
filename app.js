@@ -98,7 +98,9 @@ app.command('/environment_id', async ({ command, ack, say }) => {
 		let envId = envIdResponse.site.environments[0].id;
 
 		if (envId) {
-			say(`Hey 👋,\nYour site ${siteName}'s environment ID is 👉 ${envId}`);
+			say(
+				`Hey 👋,\n The environment ID for the site (${siteName}) is 👉 ${envId}.`
+			);
 		}
 	}
 });
@@ -114,7 +116,7 @@ app.command('/site_id', async ({ command, ack, say }) => {
 
 	let siteId = currentSite.id;
 	if (siteId) {
-		say(`Hey 👋, ${siteName}'s site ID is 👉 ${siteId}`);
+		say(`Hey 👋, \n the site ID for the site (${siteName}) is 👉 ${siteId}`);
 	}
 });
 
@@ -139,7 +141,7 @@ app.command('/clear_site_cache', async ({ command, ack, say }) => {
 
 	if (response) {
 		say(
-			`Hey 👋, Your operation's status is 👉 ${response.message} || ${response.operation_id}`
+			`Hey 👋, \n The operation status is 👉 ${response.message}. /n *N:B:* The operation Id is ${response.operation_id}.`
 		);
 	}
 });
