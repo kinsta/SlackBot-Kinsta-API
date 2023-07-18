@@ -141,7 +141,7 @@ app.command('/clear_site_cache', async ({ command, ack, say }) => {
 
 	if (response) {
 		say(
-			`Hey 👋, \n The operation status is 👉 ${response.message}. /n *N:B:* The operation Id is ${response.operation_id}.`
+			`Hey 👋, \n The operation status is 👉 ${response.message} by using the /operation_status slack commmand. \n Operation Id is ${response.operation_id}`
 		);
 	}
 });
