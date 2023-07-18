@@ -82,22 +82,21 @@ async function restartPHPEngine(environmentId) {
 }
 
 app.command('/environment_id', async ({ command, ack, say }) => {
-	try {
-		await ack();
+	await ack();
 
-		let siteName = command.text;
+	let siteName = command.text;
 
-		let response = await getAllSites();
+	let response = await getAllSites();
+	if (response) {
 		let mySites = response.company.sites;
 		let currentSite = mySites.find((site) => site.name === siteName);
 
 		let envIdResponse = await getEnvironmentId(currentSite.id);
 		let envId = envIdResponse.site.environments[0].id;
 
-		say(`Hey 👋,\nYour site ${siteName}'s environment ID is 👉 ${envId}`);
-	} catch (error) {
-		console.log('err');
-		console.error(error);
+		if (envId) {
+			say(`Hey 👋,\nYour site ${siteName}'s environment ID is 👉 ${envId}`);
+		}
 	}
 });
 
