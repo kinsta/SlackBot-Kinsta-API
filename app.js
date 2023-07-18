@@ -11,7 +11,12 @@ const app = new App({
 
 const KinstaAPIUrl = 'https://api.kinsta.com/v2';
 
-const headers = {
+const getHeaders = {
+	Authorization: `Bearer ${process.env.KINSTA_API_KEY}`,
+};
+
+const postHeaders = {
+	'Content-Type': 'application/json',
 	Authorization: `Bearer ${process.env.KINSTA_API_KEY}`,
 };
 
@@ -22,7 +27,7 @@ async function getAllSites() {
 
 	const resp = await fetch(`${KinstaAPIUrl}/sites?${query}`, {
 		method: 'GET',
-		headers,
+		headers: getHeaders,
 	});
 
 	const data = await resp.json();
@@ -33,7 +38,7 @@ async function getAllSites() {
 async function getEnvironmentId(siteId) {
 	const resp = await fetch(`${KinstaAPIUrl}/sites/${siteId}/environments`, {
 		method: 'GET',
-		headers,
+		headers: getHeaders,
 	});
 
 	const data = await resp.json();
@@ -41,13 +46,36 @@ async function getEnvironmentId(siteId) {
 }
 
 async function CheckOperationStatus(operationId) {
-	const resp = await fetch(
-		`https://api.kinsta.com/v2/operations/${operationId}`,
-		{
-			method: 'GET',
-			headers,
-		}
-	);
+	const resp = await fetch(`${KinstaAPIUrl}/operations/${operationId}`, {
+		method: 'GET',
+		headers: getHeaders,
+	});
+
+	const data = await resp.json();
+	return data;
+}
+
+async function clearSiteCache(environmentId) {
+	const resp = await fetch(`${KinstaAPIUrl}/sites/tools/clear-cache`, {
+		method: 'POST',
+		headers: postHeaders,
+		body: JSON.stringify({
+			environment_id: environmentId,
+		}),
+	});
+
+	const data = await resp.json();
+	return data;
+}
+
+async function restartPHPEngine(environmentId) {
+	const resp = await fetch(`${KinstaAPIUrl}/sites/tools/restart-php`, {
+		method: 'POST',
+		headers: postHeaders,
+		body: JSON.stringify({
+			environment_id: environmentId,
+		}),
+	});
 
 	const data = await resp.json();
 	return data;
@@ -102,6 +130,40 @@ app.command('/operation_status', async ({ command, ack, say }) => {
 		let operationMessage = response.message;
 
 		say(`Hey 👋, Your operation's status is 👉 ${operationMessage}`);
+	} catch (error) {
+		console.log('err');
+		console.error(error);
+	}
+});
+
+app.command('/clear_site_cache', async ({ command, ack, say }) => {
+	try {
+		await ack();
+
+		let environmentId = command.text;
+
+		let response = await clearSiteCache(environmentId);
+
+		say(
+			`Hey 👋, Your operation's status is 👉 ${response.message} || ${response.operation_id}`
+		);
+	} catch (error) {
+		console.log('err');
+		console.error(error);
+	}
+});
+
+app.command('/restart_env_php_engine', async ({ command, ack, say }) => {
+	try {
+		await ack();
+
+		let environmentId = command.text;
+
+		let response = await restartPHPEngine(environmentId);
+
+		say(
+			`Hey 👋, Your operation's status is 👉 ${response.message} || ${response.operation_id}`
+		);
 	} catch (error) {
 		console.log('err');
 		console.error(error);
