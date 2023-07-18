@@ -9,6 +9,7 @@ const app = new App({
 	appToken: process.env.APP_TOKEN,
 });
 
+// kinsta API utilities
 const KinstaAPIUrl = 'https://api.kinsta.com/v2';
 
 const getHeaders = {
@@ -20,6 +21,7 @@ const postHeaders = {
 	Authorization: `Bearer ${process.env.KINSTA_API_KEY}`,
 };
 
+// querying Kinsta API
 async function getAllSites() {
 	const query = new URLSearchParams({
 		company: process.env.KINSTA_COMPANY_ID,
@@ -81,6 +83,7 @@ async function restartPHPEngine(environmentId) {
 	return data;
 }
 
+// creating slash commands
 app.command('/environment_id', async ({ command, ack, say }) => {
 	await ack();
 
@@ -101,77 +104,62 @@ app.command('/environment_id', async ({ command, ack, say }) => {
 });
 
 app.command('/site_id', async ({ command, ack, say }) => {
-	try {
-		await ack();
+	await ack();
 
-		let siteName = command.text;
+	let siteName = command.text;
 
-		let response = await getAllSites();
-		let mySites = response.company.sites;
-		let currentSite = mySites.find((site) => site.name === siteName);
+	let response = await getAllSites();
+	let mySites = response.company.sites;
+	let currentSite = mySites.find((site) => site.name === siteName);
 
-		let siteId = currentSite.id;
-
+	let siteId = currentSite.id;
+	if (siteId) {
 		say(`Hey 👋, ${siteName}'s site ID is 👉 ${siteId}`);
-	} catch (error) {
-		console.log('err');
-		console.error(error);
 	}
 });
 
 app.command('/operation_status', async ({ command, ack, say }) => {
-	try {
-		await ack();
+	await ack();
 
-		let operationId = command.text;
+	let operationId = command.text;
 
-		let response = await CheckOperationStatus(operationId);
-		let operationMessage = response.message;
+	let response = await CheckOperationStatus(operationId);
+	let operationMessage = response.message;
 
+	if (operationMessage) {
 		say(`Hey 👋, Your operation's status is 👉 ${operationMessage}`);
-	} catch (error) {
-		console.log('err');
-		console.error(error);
 	}
 });
 
 app.command('/clear_site_cache', async ({ command, ack, say }) => {
-	try {
-		await ack();
+	await ack();
 
-		let environmentId = command.text;
+	let environmentId = command.text;
+	let response = await clearSiteCache(environmentId);
 
-		let response = await clearSiteCache(environmentId);
-
+	if (response) {
 		say(
 			`Hey 👋, Your operation's status is 👉 ${response.message} || ${response.operation_id}`
 		);
-	} catch (error) {
-		console.log('err');
-		console.error(error);
 	}
 });
 
 app.command('/restart_env_php_engine', async ({ command, ack, say }) => {
-	try {
-		await ack();
+	await ack();
 
-		let environmentId = command.text;
+	let environmentId = command.text;
+	let response = await restartPHPEngine(environmentId);
 
-		let response = await restartPHPEngine(environmentId);
-
+	if (response) {
 		say(
 			`Hey 👋, Your operation's status is 👉 ${response.message} || ${response.operation_id}`
 		);
-	} catch (error) {
-		console.log('err');
-		console.error(error);
 	}
 });
 
 (async () => {
-	const port = process.env.PORT || 4000;
+	const port = 4000;
 	// Start your app
-	await app.start(process.env.PORT || port);
-	console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
+	await app.start(port);
+	console.log(`⚡️ Kinsta Bot app is running on port ${port}!`);
 })();
