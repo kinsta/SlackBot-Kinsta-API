@@ -144,7 +144,7 @@ app.command('/clear_site_cache', async ({ command, ack, say }) => {
 	}
 });
 
-app.command('/restart_PHP_engine', async ({ command, ack, say }) => {
+app.command('/restart_php_engine', async ({ command, ack, say }) => {
 	await ack();
 
 	let environmentId = command.text;
