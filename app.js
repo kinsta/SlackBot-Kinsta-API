@@ -127,7 +127,7 @@ app.command('/operation_status', async ({ command, ack, say }) => {
 	let operationMessage = response.message;
 
 	if (operationMessage) {
-		say(`Hey 👋, \n\nYour operation's status is 👉 ${operationMessage}`);
+		say(`Hey 👋, \n\n${operationMessage}`);
 	}
 });
 
@@ -139,12 +139,12 @@ app.command('/clear_site_cache', async ({ command, ack, say }) => {
 
 	if (response) {
 		say(
-			`Hey 👋, \n\n${response.message} by using the /operation_status slack commmand. \n\n Operation Id is ${response.operation_id}`
+			`Hey 👋, \n\n${response.message} by using the /operation_status slack commmand. \n\nOperation Id is ${response.operation_id}`
 		);
 	}
 });
 
-app.command('/restart_env_php_engine', async ({ command, ack, say }) => {
+app.command('/restart_PHP_engine', async ({ command, ack, say }) => {
 	await ack();
 
 	let environmentId = command.text;
@@ -152,7 +152,7 @@ app.command('/restart_env_php_engine', async ({ command, ack, say }) => {
 
 	if (response) {
 		say(
-			`Hey 👋, \n\n${response.message} by using the /operation_status slack commmand. \n\n Operation Id is ${response.operation_id}`
+			`Hey 👋, \n\n${response.message} by using the /operation_status slack commmand. \n\nOperation Id is ${response.operation_id}`
 		);
 	}
 });
