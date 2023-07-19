@@ -98,9 +98,7 @@ app.command('/environment_id', async ({ command, ack, say }) => {
 		let envId = envIdResponse.site.environments[0].id;
 
 		if (envId) {
-			say(
-				`Hey 👋,\n The environment ID for the site (${siteName}) is 👉 ${envId}.`
-			);
+			say(`Hey 👋,\n\nThe environment ID for "${siteName}" is 👉 ${envId}`);
 		}
 	}
 });
@@ -116,7 +114,7 @@ app.command('/site_id', async ({ command, ack, say }) => {
 
 	let siteId = currentSite.id;
 	if (siteId) {
-		say(`Hey 👋, \n the site ID for the site (${siteName}) is 👉 ${siteId}`);
+		say(`Hey 👋, \n\nThe site ID for "${siteName}" is 👉 ${siteId}`);
 	}
 });
 
@@ -129,7 +127,7 @@ app.command('/operation_status', async ({ command, ack, say }) => {
 	let operationMessage = response.message;
 
 	if (operationMessage) {
-		say(`Hey 👋, Your operation's status is 👉 ${operationMessage}`);
+		say(`Hey 👋, \n\nYour operation's status is 👉 ${operationMessage}`);
 	}
 });
 
@@ -141,7 +139,7 @@ app.command('/clear_site_cache', async ({ command, ack, say }) => {
 
 	if (response) {
 		say(
-			`Hey 👋, \n The operation status is 👉 ${response.message} by using the /operation_status slack commmand. \n Operation Id is ${response.operation_id}`
+			`Hey 👋, \n\n${response.message} by using the /operation_status slack commmand. \n\n Operation Id is ${response.operation_id}`
 		);
 	}
 });
@@ -154,7 +152,7 @@ app.command('/restart_env_php_engine', async ({ command, ack, say }) => {
 
 	if (response) {
 		say(
-			`Hey 👋, Your operation's status is 👉 ${response.message} || ${response.operation_id}`
+			`Hey 👋, \n\n${response.message} by using the /operation_status slack commmand. \n\n Operation Id is ${response.operation_id}`
 		);
 	}
 });
