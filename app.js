@@ -121,16 +121,14 @@ app.command('/site_id', async ({ command, ack, say }) => {
 app.command('/operation_status', async ({ command, ack, say }) => {
 	await ack();
 
-	say('Wooah! it works!');
+	let operationId = command.text;
 
-	// let operationId = command.text;
+	let response = await CheckOperationStatus(operationId);
+	let operationMessage = response.message;
 
-	// let response = await CheckOperationStatus(operationId);
-	// let operationMessage = response.message;
-
-	// if (operationMessage) {
-	// 	say(`Hey 👋, \n\n${operationMessage}`);
-	// }
+	if (operationMessage) {
+		say(`Hey 👋, \n\n${operationMessage}`);
+	}
 });
 
 app.command('/clear_site_cache', async ({ command, ack, say }) => {
