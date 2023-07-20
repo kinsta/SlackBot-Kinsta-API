@@ -30,9 +30,11 @@ REACT_APP_KINSTA_API_KEY = 'YOUR_API_KEY'
 Kinsta automatically sets the `PORT` environment variable. You should not define it yourself and you should not hard-code it into the application. Use `process.env.PORT` in your code when referring to the server port.
 
 ```js
-app.listen(process.env.PORT, () => {
-    console.log(`Hello World Application is running on port ${process.env.PORT}`)
-})
+(async () => {
+	// Start your app
+	await app.start(process.env.PORT);
+	console.log(`⚡️ Kinsta Bot app is running on port ${process.env.PORT}!`);
+})();
 ```
 
 ### Start Command
@@ -41,7 +43,7 @@ When deploying an application Kinsta will automatically create a web process wit
 
 ```json
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js"
   },
 ```
 ### Deployment Lifecycle
