@@ -159,6 +159,9 @@ app.command('/restart_php_engine', async ({ command, ack, say }) => {
 
 (async () => {
 	// Start your app
-	await app.start(process.env.PORT);
-	console.log(`⚡️ Kinsta Bot app is running on port ${process.env.PORT}!`);
+    await app.start(process.env.PORT || 3000);
+		console.log(
+			`⚡️ Kinsta Bot app is running on port ${process.env.PORT || 3000}!`
+		);
+
 })();
