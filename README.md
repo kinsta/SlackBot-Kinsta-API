@@ -1,10 +1,11 @@
-![image]()
+
+![how-to-build-a-slackbot-with-node js-and-kinsta-api-for-site-management (2)](https://github.com/kinsta/SlackBot-Kinsta-API/assets/57611810/b4ada232-a957-48e4-8511-397fbbafa3fc)
 
 # How To Build a Slackbot With Node.js and Kinsta API For Site Management
 
 This tutorial combines the power of Slack and the Kinsta API to build a Slackbot capable of managing various site tasks. With this Slackbot, we perform actions such as checking site status, clearing a site's cache, restarting a site's PHP engine, and lots more.
 
-Read the [full article](https://kinsta.com/blog/SLUG/).
+Read the [full article](https://kinsta.com/blog/create-slackbot-site-management).
 
 ## Installation
 1. Clone or fork the repository.
