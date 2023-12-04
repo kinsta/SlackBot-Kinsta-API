@@ -83,6 +83,25 @@ async function restartPHPEngine(environmentId) {
 	return data;
 }
 
+// --- Handling backups with Kinsta API --- //
+
+// Get manual, schedule and system generated backups
+
+async function getBackups(environmentId) {
+	const resp = await fetch(
+		`${KinstaAPIUrl}/sites/environments/${environmentId}/backups`,
+		{
+			method: 'GET',
+			headers: getHeaders,
+		}
+	);
+
+	const data = await resp.json();
+	return data;
+}
+
+// -------- SLASH COMMANDS ---------- //
+
 // creating slash commands
 app.command('/environment_id', async ({ command, ack, say }) => {
 	await ack();
@@ -157,11 +176,35 @@ app.command('/restart_php_engine', async ({ command, ack, say }) => {
 	}
 });
 
+app.command('/get_backups', async ({ command, ack, say }) => {
+	await ack();
+
+	let environmentId = command.text;
+	let response = await getBackups(environmentId);
+
+	let backups = response.environment.backups;
+
+	let backupDetails = backups
+		.map((backup) => {
+			return `Backup ID: ${backup.id}\nName: ${backup.name}\nNote: ${
+				backup.note
+			}\nType: ${backup.type}\nCreated At: ${new Date(backup.created_at)}\n\n`;
+		})
+		.join('');
+
+	if (backupDetails) {
+		say(
+			`Hey 👋, here are the backup details for environment ID ${environmentId}:\n\n${backupDetails}`
+		);
+	} else {
+		say(`No backups found for environment ID ${environmentId}`);
+	}
+});
+
 (async () => {
 	// Start your app
-    await app.start(process.env.PORT || 3000);
-		console.log(
-			`⚡️ Kinsta Bot app is running on port ${process.env.PORT || 3000}!`
-		);
-
+	await app.start(process.env.PORT || 3000);
+	console.log(
+		`⚡️ Kinsta Bot app is running on port ${process.env.PORT || 3000}!`
+	);
 })();
