@@ -113,6 +113,23 @@ async function getDownloadableBackups(environmentId) {
 	return data;
 }
 
+async function restoreBackup(targetEnvironmentId, backupId, environmentName) {
+	const resp = await fetch(
+		`${KinstaAPIUrl}/sites/environments/${targetEnvironmentId}/backups/restore`,
+		{
+			method: 'POST',
+			headers: postHeaders,
+			body: JSON.stringify({
+				backup_id: backupId,
+				env_display_name_of_backup: environmentName,
+			}),
+		}
+	);
+
+	const data = await resp.json();
+	return data;
+}
+
 // -------- SLASH COMMANDS ---------- //
 
 // creating slash commands
@@ -238,6 +255,25 @@ app.command('/get_downloadable_backups', async ({ command, ack, say }) => {
 		);
 	} else {
 		say(`No downloadable backups found for environment ${environmentId}`);
+	}
+});
+
+app.command('/restore_backup', async ({ command, ack, say }) => {
+	await ack();
+
+	const [targetEnvironmentId, backupId, environmentName] =
+		command.text.split(' ');
+
+	let response = await restoreBackup(
+		targetEnvironmentId,
+		backupId,
+		environmentName
+	);
+
+	if (response) {
+		say(
+			`Hey 👋, \n\n${response.message}. You can use the /operation_status slack commmand to check the status of this Operation Id ${response.operation_id}`
+		);
 	}
 });
 
