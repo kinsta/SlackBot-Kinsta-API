@@ -85,8 +85,8 @@ async function restartPHPEngine(environmentId) {
 
 async function getSiteLogs(environmentId, fileName, lines) {
 	const query = new URLSearchParams({
-		file_name: fileName,
-		lines: lines,
+		file_name: fileName || 'error',
+		lines: lines || 1000,
 	}).toString();
 
 	const envId = 'YOUR_env_id_PARAMETER';
