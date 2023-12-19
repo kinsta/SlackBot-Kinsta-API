@@ -83,6 +83,25 @@ async function restartPHPEngine(environmentId) {
 	return data;
 }
 
+async function getSiteLogs(environmentId, fileName, lines) {
+	const query = new URLSearchParams({
+		file_name: fileName || 'error',
+		lines: lines || 1000,
+	}).toString();
+
+	const envId = 'YOUR_env_id_PARAMETER';
+	const resp = await fetch(
+		`https://api.kinsta.com/v2/sites/environments/${environmentId}/logs?${query}`,
+		{
+			method: 'GET',
+			headers: getHeaders,
+		}
+	);
+
+	const data = await resp.json();
+	return data;
+}
+
 // --- Handling backups with Kinsta API --- //
 
 // Get manual, schedule and system generated backups
@@ -274,6 +293,23 @@ app.command('/restore_backup', async ({ command, ack, say }) => {
 		say(
 			`Hey 👋, \n\n${response.message}. You can use the /operation_status slack commmand to check the status of this Operation Id ${response.operation_id}`
 		);
+	}
+});
+
+app.command('/get_site_logs', async ({ command, ack, say }) => {
+	await ack();
+
+	const [environmentId, fileName, lines] = command.text.split(' ');
+
+	let response = await getSiteLogs(environmentId, fileName, lines);
+
+	if (response) {
+		const logs = response.environment.container_info.logs.split('\n');
+		const formattedLogs = logs.join('\n\n'); // or any other formatting needed
+
+		say(`Hey 👋, \n\nHere are the logs for ${fileName}:\n\n${formattedLogs}`);
+	} else {
+		say(`Sorry, no logs found for ${fileName}.`);
 	}
 });
 
