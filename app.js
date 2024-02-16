@@ -149,6 +149,35 @@ async function restoreBackup(targetEnvironmentId, backupId, environmentName) {
 	return data;
 }
 
+async function addManualBackup(environmentId, tag) {
+	const resp = await fetch(
+		`${KinstaAPIUrl}/sites/environments/${environmentId}/manual-backups`,
+		{
+			method: 'POST',
+			headers: postHeaders,
+			body: JSON.stringify({
+				tag,
+			}),
+		}
+	);
+
+	const data = await resp.json();
+	return data;
+}
+
+async function deleteBackup(backupId) {
+	const resp = await fetch(
+		`${KinstaAPIUrl}/sites/environments/backups/${backupId}`,
+		{
+			method: 'DELETE',
+			headers: getHeaders,
+		}
+	);
+
+	const data = await resp.json();
+	return data;
+}
+
 // -------- SLASH COMMANDS ---------- //
 
 // creating slash commands
@@ -293,6 +322,32 @@ app.command('/restore_backup', async ({ command, ack, say }) => {
 		say(
 			`Hey 👋, \n\n${response.message}. You can use the /operation_status slack commmand to check the status of this Operation Id ${response.operation_id}`
 		);
+	}
+});
+
+app.command('/add_manual_backup', async ({ command, ack, say }) => {
+	await ack();
+
+	const [environmentId, tag] = command.text.split(' ');
+
+	let response = await addManualBackup(environmentId, tag);
+
+	if (response) {
+		say(
+			`Hey 👋, \n\n${response.message}. You can use the /operation_status slack commmand to check the status of this Operation Id ${response.operation_id}`
+		);
+	}
+});
+
+app.command('/delete_backup', async ({ command, ack, say }) => {
+	await ack();
+
+	let backupId = command.text;
+
+	let response = await deleteBackup(backupId);
+
+	if (response) {
+		say(`Hey 👋, \n\n${response.message}`);
 	}
 });
 
