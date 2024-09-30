@@ -1,5 +1,6 @@
 const { App } = require('@slack/bolt');
 require('dotenv').config();
+const schedule = require('node-schedule');
 
 // Initialization
 const app = new App({
@@ -89,7 +90,6 @@ async function getSiteLogs(environmentId, fileName, lines) {
 		lines: lines || 1000,
 	}).toString();
 
-	const envId = 'YOUR_env_id_PARAMETER';
 	const resp = await fetch(
 		`https://api.kinsta.com/v2/sites/environments/${environmentId}/logs?${query}`,
 		{
@@ -184,15 +184,15 @@ async function deleteBackup(backupId) {
 app.command('/environment_id', async ({ command, ack, say }) => {
 	await ack();
 
-	let siteName = command.text;
+	const siteName = command.text;
 
-	let response = await getAllSites();
+	const response = await getAllSites();
 	if (response) {
-		let mySites = response.company.sites;
-		let currentSite = mySites.find((site) => site.name === siteName);
+		const mySites = response.company.sites;
+		const currentSite = mySites.find((site) => site.name === siteName);
 
-		let envIdResponse = await getEnvironmentId(currentSite.id);
-		let envId = envIdResponse.site.environments[0].id;
+		const envIdResponse = await getEnvironmentId(currentSite.id);
+		const envId = envIdResponse.site.environments[0].id;
 
 		if (envId) {
 			say(`Hey 👋,\n\nThe environment ID for "${siteName}" is 👉 ${envId}`);
@@ -203,13 +203,13 @@ app.command('/environment_id', async ({ command, ack, say }) => {
 app.command('/site_id', async ({ command, ack, say }) => {
 	await ack();
 
-	let siteName = command.text;
+	const siteName = command.text;
 
-	let response = await getAllSites();
-	let mySites = response.company.sites;
-	let currentSite = mySites.find((site) => site.name === siteName);
+	const response = await getAllSites();
+	const mySites = response.company.sites;
+	const currentSite = mySites.find((site) => site.name === siteName);
 
-	let siteId = currentSite.id;
+	const siteId = currentSite.id;
 	if (siteId) {
 		say(`Hey 👋, \n\nThe site ID for "${siteName}" is 👉 ${siteId}`);
 	}
@@ -218,10 +218,10 @@ app.command('/site_id', async ({ command, ack, say }) => {
 app.command('/operation_status', async ({ command, ack, say }) => {
 	await ack();
 
-	let operationId = command.text;
+	const operationId = command.text;
 
-	let response = await CheckOperationStatus(operationId);
-	let operationMessage = response.message;
+	const response = await CheckOperationStatus(operationId);
+	const operationMessage = response.message;
 
 	if (operationMessage) {
 		say(`Hey 👋, \n\n${operationMessage}`);
@@ -231,8 +231,8 @@ app.command('/operation_status', async ({ command, ack, say }) => {
 app.command('/clear_site_cache', async ({ command, ack, say }) => {
 	await ack();
 
-	let environmentId = command.text;
-	let response = await clearSiteCache(environmentId);
+	const environmentId = command.text;
+	const response = await clearSiteCache(environmentId);
 
 	if (response) {
 		say(
@@ -244,8 +244,8 @@ app.command('/clear_site_cache', async ({ command, ack, say }) => {
 app.command('/restart_php_engine', async ({ command, ack, say }) => {
 	await ack();
 
-	let environmentId = command.text;
-	let response = await restartPHPEngine(environmentId);
+	const environmentId = command.text;
+	const response = await restartPHPEngine(environmentId);
 
 	if (response) {
 		say(
@@ -257,12 +257,12 @@ app.command('/restart_php_engine', async ({ command, ack, say }) => {
 app.command('/get_backups', async ({ command, ack, say }) => {
 	await ack();
 
-	let environmentId = command.text;
-	let response = await getBackups(environmentId);
+	const environmentId = command.text;
+	const response = await getBackups(environmentId);
 
-	let backups = response.environment.backups;
+	const backups = response.environment.backups;
 
-	let backupDetails = backups
+	const backupDetails = backups
 		.map((backup) => {
 			return `Backup ID: ${backup.id}\nName: ${backup.name}\nNote: ${
 				backup.note
@@ -282,12 +282,12 @@ app.command('/get_backups', async ({ command, ack, say }) => {
 app.command('/get_downloadable_backups', async ({ command, ack, say }) => {
 	await ack();
 
-	let environmentId = command.text;
-	let response = await getDownloadableBackups(environmentId);
+	const environmentId = command.text;
+	const response = await getDownloadableBackups(environmentId);
 
-	let backups = response.environment.downloadable_backups;
+	const backups = response.environment.downloadable_backups;
 
-	let downloadable_backupDetails = backups
+	const downloadable_backupDetails = backups
 		.map((backup) => {
 			return `Backup ID: ${backup.id}\nDownload Link: ${
 				backup.download_link
@@ -312,7 +312,7 @@ app.command('/restore_backup', async ({ command, ack, say }) => {
 	const [targetEnvironmentId, backupId, environmentName] =
 		command.text.split(' ');
 
-	let response = await restoreBackup(
+	const response = await restoreBackup(
 		targetEnvironmentId,
 		backupId,
 		environmentName
@@ -330,7 +330,7 @@ app.command('/add_manual_backup', async ({ command, ack, say }) => {
 
 	const [environmentId, tag] = command.text.split(' ');
 
-	let response = await addManualBackup(environmentId, tag);
+	const response = await addManualBackup(environmentId, tag);
 
 	if (response) {
 		say(
@@ -342,9 +342,9 @@ app.command('/add_manual_backup', async ({ command, ack, say }) => {
 app.command('/delete_backup', async ({ command, ack, say }) => {
 	await ack();
 
-	let backupId = command.text;
+	const backupId = command.text;
 
-	let response = await deleteBackup(backupId);
+	const response = await deleteBackup(backupId);
 
 	if (response) {
 		say(`Hey 👋, \n\n${response.message}`);
@@ -356,7 +356,7 @@ app.command('/get_site_logs', async ({ command, ack, say }) => {
 
 	const [environmentId, fileName, lines] = command.text.split(' ');
 
-	let response = await getSiteLogs(environmentId, fileName, lines);
+	const response = await getSiteLogs(environmentId, fileName, lines);
 
 	if (response) {
 		const logs = response.environment.container_info.logs.split('\n');
@@ -366,6 +366,183 @@ app.command('/get_site_logs', async ({ command, ack, say }) => {
 	} else {
 		say(`Sorry, no logs found for ${fileName}.`);
 	}
+});
+
+// Command to schedule backup at a specific time
+app.command('/schedule_backup', async ({ command, ack, say }) => {
+	await ack();
+
+	// Extract environment ID, tag, and time from the Slack command text
+	const [environmentId, tag, time] = command.text.split(' ');
+
+	// Validate time (expecting HH:MM in 24-hour format)
+	const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+	if (!time || !timeRegex.test(time)) {
+		say('Invalid time format. Please use HH:MM (24-hour format).');
+		return;
+	}
+
+	const [hour, minute] = time.split(':').map(Number);
+
+	// Schedule the backup
+	const date = new Date();
+	date.setHours(hour, minute, 0, 0); // Set the time for the scheduled backup
+
+	// Schedule the backup using node-schedule
+	schedule.scheduleJob(date, async () => {
+		try {
+			// Call the function to create a manual backup
+			await addManualBackup(environmentId, tag);
+
+			// Notify the user via Slack when the backup is created
+			await say(
+				`Backup with tag *${tag}* has been successfully created for environment *${environmentId}*.`
+			);
+		} catch (error) {
+			console.error('Error creating scheduled backup:', error);
+			await say(
+				`Failed to create backup for environment *${environmentId}*. Please try again.`
+			);
+		}
+	});
+
+	// Acknowledge scheduling in Slack immediately
+	say(
+		`Backup for environment *${environmentId}* has been scheduled at *${time}* with tag *${tag}*.`
+	);
+});
+
+app.command('/backup_all_sites', async ({ command, ack, say }) => {
+	await ack();
+
+	const tag = command.text || 'default-backup-tag'; // Optionally take a tag from the command or use a default
+
+	// Fetch all sites for the company
+	const sitesResponse = await getAllSites(); // This function is already defined in your code
+
+	if (sitesResponse && sitesResponse.company && sitesResponse.company.sites) {
+		const sites = sitesResponse.company.sites;
+
+		// Iterate through each site and retrieve the environment ID
+		for (const site of sites) {
+			const envResponse = await getEnvironmentId(site.id); // Fetch the environment ID of the site
+
+			if (envResponse && envResponse.site.environments) {
+				const environments = envResponse.site.environments;
+
+				// Create a backup for each environment of the site
+				for (const environment of environments) {
+					try {
+						await addManualBackup(environment.id, tag);
+
+						await say(
+							`Backup successfully created for environment *${environment.display_name}* of site *${site.name}* with tag *${tag}*.`
+						);
+					} catch (error) {
+						console.error(
+							`Error creating backup for site ${site.name}:`,
+							error
+						);
+						say(
+							`Failed to create backup for environment *${environment.display_name}* of site *${site.name}*.`
+						);
+					}
+				}
+			} else {
+				say(`No environments found for site *${site.name}*.`);
+			}
+		}
+	} else {
+		say('No sites found for your company.');
+	}
+});
+
+app.command('/backup_multiple_envs', async ({ command, ack, say }) => {
+	await ack();
+
+	const inputText = command.text;
+	const [tag, ...envIds] = inputText.split(' '); // The first part of the command is the tag, and the rest are environment IDs
+
+	if (!envIds.length) {
+		say('Please provide at least one environment ID.');
+		return;
+	}
+
+	// Loop through the environment IDs and create a backup for each
+	for (const envId of envIds) {
+		try {
+			await addManualBackup(envId, tag);
+
+			await say(
+				`Backup successfully created for environment ID *${envId}* with tag *${tag}*.`
+			);
+		} catch (error) {
+			console.error(
+				`Error creating backup for environment ID ${envId}:`,
+				error
+			);
+			say(`Failed to create backup for environment ID *${envId}*.`);
+		}
+	}
+});
+
+app.command('/schedule_backup_all_sites', async ({ command, ack, say }) => {
+	await ack();
+
+	const [tag, time] = command.text.split(' '); // Get the backup tag and the time
+	const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Validate time format (24-hour HH:MM)
+
+	if (!time || !timeRegex.test(time)) {
+		say('Invalid time format. Please use HH:MM (24-hour format).');
+		return;
+	}
+
+	const [hour, minute] = time.split(':').map(Number);
+
+	// Schedule the backup
+	const date = new Date();
+	date.setHours(hour, minute, 0, 0);
+
+	schedule.scheduleJob(date, async () => {
+		const sitesResponse = await getAllSites();
+
+		if (sitesResponse && sitesResponse.company && sitesResponse.company.sites) {
+			const sites = sitesResponse.company.sites;
+
+			for (const site of sites) {
+				const envResponse = await getEnvironmentId(site.id);
+
+				if (envResponse && envResponse.site.environments) {
+					const environments = envResponse.site.environments;
+
+					for (const environment of environments) {
+						try {
+							await addManualBackup(environment.id, tag);
+
+							await say(
+								`Scheduled backup successfully created for environment *${environment.display_name}* of site *${site.name}* with tag *${tag}*.`
+							);
+						} catch (error) {
+							console.error(
+								`Error creating backup for site ${site.name}:`,
+								error
+							);
+							say(
+								`Failed to create scheduled backup for environment *${environment.display_name}* of site *${site.name}*.`
+							);
+						}
+					}
+				} else {
+					say(`No environments found for site *${site.name}*.`);
+				}
+			}
+		} else {
+			say('No sites found for your company.');
+		}
+	});
+
+	// Respond immediately that scheduling is done
+	say(`Backup for all sites scheduled at *${time}* with tag *${tag}*.`);
 });
 
 (async () => {
